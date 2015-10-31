@@ -8,6 +8,8 @@
 
 
 const size_t max_size = 100;
+// FYI: И правда же лучше, потому что он беззнаковый и именно для этого
+// предназначен.
 const size_t start_size = 100; // или лучше size_t?
 
 typedef int stack_element; // для того, чтобы быстро изменять тип данных внутри
@@ -22,6 +24,7 @@ typedef struct stack
 
 int main() {
 
+// FIXME: WHAAAT?
     stack* S
             {
 
