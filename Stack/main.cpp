@@ -1,36 +1,22 @@
-#include <iostream>
 
 #include <stdio.h>
-#include <string.h>
 #include <assert.h>
-#include <malloc.h>
-#include <stdlib.h>
+//#include "Stack.h"
+#include "stack_array.cpp"
 
-
-const size_t max_size = 100;
-// FYI: И правда же лучше, потому что он беззнаковый и именно для этого
-// предназначен.
-const size_t start_size = 100; // или лучше size_t?
-
-typedef int stack_element; // для того, чтобы быстро изменять тип данных внутри
-
-typedef struct stack
-{
-    size_t current_size;
-    stack_element* data;
-    int top;
-
-};
 
 int main() {
 
-// FIXME: WHAAAT?
-    stack* S
-            {
-
-            };
     size_t start_size = 5;
-    void Stack_Init (stack* S, );
+    stack S = {};
+    StackInit (&S, start_size);
+    int a = 5;
+    int b = 5;
+    Push(&S, a);
+    Push(&S,b);
+    Dump(&S);
+
+
 
     return 0;
 }
