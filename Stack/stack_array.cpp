@@ -13,9 +13,9 @@ enum MISTAKES
     STACK_IS_EMPTY =  2,
     CALLOC_ERROR = 3,
     DUMP_CALLED = 4
-}
+};
 
-const size_t start_size = 100;
+//size_t const start_size = 10;
 typedef int stack_element;
 
 
@@ -42,42 +42,57 @@ bool IsOk (stack* S)
 # define $ ,
 #define LOG_PRINT(fmt, value) printf(fmt, value)
 
+
 int Dump(stack* S)
 {
-    if (!S) LOG_PRINT("error: NULL pointer to stack. Stack pointer = %d\n", S);
-    if (S->top >= S->current_size) LOG_PRINT("error: top is out of current size. Top = %d, current_size = %d\n", (S->top $ S->current_size));
-    if (!(S->data)) LOG_PRINT("error: NULL pointer to stack data. Data pointer = %d\n", S->data);
-    for (int i = 0; i < S->top; i++)
+
+    if (!S) LOG_PRINT("error: NULL pointer to stack. Line number %d, File name %s\n", __LINE__ $ __FILE__);
+    else
     {
-        LOG_PRINT("Stack element number %d :%d \n", (i $ S->data[i]));
+
+        LOG_PRINT("Stack pointer %p. Line number %d, File name %s\n", S $ __LINE__ $ __FILE__);
+        if (S->top >= S->current_size) LOG_PRINT("error: top is out of current size. Top = %d, current_size = %zu\n", S->top $ S->current_size);
+
+        if (!(S->data)) LOG_PRINT("error: NULL pointer to stack data. Line number %d, File name %s\n", __LINE__ $ __FILE__);
+        else {
+            for (int i = 0; i < S->top; i++)
+            {
+                LOG_PRINT("Stack element number %d :%d \n", i $ S->data[i]);
+            }
+        }
     }
 
-    return __LINE_;
+
+
+    return __LINE__;
 }
 
 
 
-int StackInit (stack* S, size_t start_size)
+int StackInit (stack* S, size_t const start_size)
 {
-    if(!IsOk(S))
-        return (Dump(S)), DUMP_CALLED;
-    else
-    {
-        stack_element* new_data = NULL;  //  0 is for numbers, NULL for pointers
-        new_data = (stack_element *)calloc(start_size, sizeof(stack_element));
+    printf("Start Stack init");
+    stack_element* new_data = NULL;  //  0 is for numbers, NULL for pointers
+    printf("before new data");
+    new_data = (stack_element *)calloc(start_size, sizeof(stack_element));
+    printf ("after new data");
 
 // Try to memorize our discussion about different kinds of errors.
 // Lack of memory is a dynamic error, so it's incorrect to check this error
 // with assert because assert will disappear in release version.
-        if(!new_data) return CALLOC_ERROR;
-        else {
-            S->data = new_data;
-            S->current_size = start_size;
-            //S->top = (stack_element *)(-1);
-            S->top = -1;
-            return 0;
-        }
+    if(!new_data) return printf("CALLOC_ERROR"), CALLOC_ERROR;
+    else
+    {
+        S->data = new_data;
+        S->current_size = start_size;
+        //S->top = (stack_element *)(-1);
+        S->top = -1;
+        if(!IsOk(S))
+            return printf("IsnotOk"),Dump(S), DUMP_CALLED;
+        else return 0;
+
     }
+
 }
 
 
