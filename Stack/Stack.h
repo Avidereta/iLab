@@ -1,8 +1,15 @@
 #include <stddef.h>
 
 typedef int stack_element;
-struct stack;
-bool IsOk (stack* S);
+struct stack
+{
+    size_t current_size;
+    stack_element* data;
+    int top; //
+
+};
+
+int IsOk (stack* S);
 int Dump(stack* S);
 int StackInit (stack* S, size_t start_size);
 void StackDestroy(stack* S);

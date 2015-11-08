@@ -3,6 +3,11 @@
 #include <malloc.h>
 #include <stdlib.h>
 
+
+# define $ ,
+#define LOG_PRINT(fmt, value) printf(fmt, value)
+
+
 //Global constants should always be named UPPERCASE to show that they
 // are global
 
@@ -12,12 +17,12 @@ enum MISTAKES
     ERR_STACK_EMPTY = 1,
     STACK_IS_EMPTY =  2,
     CALLOC_ERROR = 3,
-    DUMP_CALLED = 4
+    DUMP_CALLED = 4,
+    NULL_POINTER = 5
 };
 
 //size_t const start_size = 10;
 typedef int stack_element;
-
 
 typedef struct stack
 {
@@ -25,39 +30,51 @@ typedef struct stack
     stack_element* data;
     int top; //
 
-};
-
+} stack ;
 
 // The goal of function IsOk is to return boolean value in order to
 // allow programmer to call Dump after unseccesfull result. Or assert(IsOk)
 // if he don't want to diagnose the error.
 
-bool IsOk (stack* S)
+int IsPointerOk(stack_element *p)
 {
-    if (!S) return false;
-    if (S->top >= S->current_size) return false;
-    if (!(S->data)) return false;
-    else return true;
+    if (!p)
+    {
+        LOG_PRINT("error: NULL pointer is used. Line number %d.\n", __LINE__);
+        return 0;
+    }
 }
-# define $ ,
-#define LOG_PRINT(fmt, value) printf(fmt, value)
+
+int IsOk (stack* S)
+{
+    if (!S) return printf("Problem with pointer, Dump is called\n"), 0;
+    if (S->top >= (int)S->current_size) return printf("Problem with top and current size, Dump is called\n"), 0;
+    if (!(S->data)) return printf("Problem with data pointer, Dump is called\n"), 0;
+    else return 1;
+}
+
 
 
 int Dump(stack* S)
 {
 
-    if (!S) LOG_PRINT("error: NULL pointer to stack. Line number %d, File name %s\n", __LINE__ $ __FILE__);
+    if (!S) LOG_PRINT("error: NULL pointer to stack. Line number %d\n", __LINE__ );
     else
     {
 
-        LOG_PRINT("Stack pointer %p. Line number %d, File name %s\n", S $ __LINE__ $ __FILE__);
-        if (S->top >= S->current_size) LOG_PRINT("error: top is out of current size. Top = %d, current_size = %zu\n", S->top $ S->current_size);
+        LOG_PRINT("Stack pointer %p. Line number %d\n", S $ __LINE__ );
+        if (S->top >= (int)S->current_size) LOG_PRINT("error: top is out of current size. Top = %d, current_size = %zu\n", S->top $ S->current_size);
+        else
+        {
 
-        if (!(S->data)) LOG_PRINT("error: NULL pointer to stack data. Line number %d, File name %s\n", __LINE__ $ __FILE__);
-        else {
-            for (int i = 0; i < S->top; i++)
-            {
-                LOG_PRINT("Stack element number %d :%d \n", i $ S->data[i]);
+            if (!(S->data)) LOG_PRINT("error: NULL pointer to stack data. Line number %d.\n", __LINE__);
+            else {
+                
+                for (int i = 0; i <= S->top; i++)
+                {
+
+                    LOG_PRINT("Stack element number %d :%d \n", i $ S->data[i]);
+                }
             }
         }
     }
@@ -71,11 +88,11 @@ int Dump(stack* S)
 
 int StackInit (stack* S, size_t const start_size)
 {
-    printf("Start Stack init");
+    //printf("Start Stack init\n");
     stack_element* new_data = NULL;  //  0 is for numbers, NULL for pointers
-    printf("before new data");
+    //printf("before new data\n");
     new_data = (stack_element *)calloc(start_size, sizeof(stack_element));
-    printf ("after new data");
+    //printf ("after new data\n");
 
 // Try to memorize our discussion about different kinds of errors.
 // Lack of memory is a dynamic error, so it's incorrect to check this error
@@ -88,7 +105,11 @@ int StackInit (stack* S, size_t const start_size)
         //S->top = (stack_element *)(-1);
         S->top = -1;
         if(!IsOk(S))
-            return printf("IsnotOk"),Dump(S), DUMP_CALLED;
+        {
+            Dump(S);
+            return DUMP_CALLED;
+        }
+
         else return 0;
 
     }
@@ -146,17 +167,19 @@ int Pop(stack *S, stack_element* popped_element)
             // Why do you need else? You already have return.
         else {
             *popped_element = S->data[S->top];
-            assert(popped_element);
-            S->data[S->top] = 0;
-            S->top -= 1;
-            if (S->top < S->current_size / 4) {
+            if (!IsPointerOk(popped_element)) return NULL_POINTER;
+            else {
+                S->data[S->top] = 0;
+                S->top -= 1;
+                if (S->top < (int) S->current_size / 4) {
 
-                S->data = (stack_element *) realloc(S->data, S->current_size / 2);
-                if (S->data) {
-                    S->current_size = S->current_size / 2;
-                    return 0;
+                    S->data = (stack_element *) realloc(S->data, S->current_size / 2);
+                    if (S->data) {
+                        S->current_size = S->current_size / 2;
+                        return 0;
+                    }
+                    else return CALLOC_ERROR;
                 }
-                else return CALLOC_ERROR;
             }
             return 0;
         }
@@ -170,11 +193,11 @@ int Pop(stack *S, stack_element* popped_element)
 int Push (stack *S, stack_element new_element) {
     // Check pointers!
     if(!IsOk(S))
-        return (Dump(S)), DUMP_CALLED;
+        return Dump(S), DUMP_CALLED;
 
     else {
 
-        if (S->top < S->current_size)
+        if (S->top < (int)S->current_size)
         {
             S->data[S->top++] = new_element;
             return 0;
