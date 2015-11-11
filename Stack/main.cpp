@@ -11,18 +11,29 @@ int main() {
     stack S = {};
 
     printf("start_size: %zu \n", start_size);
-    //printf ("S hello %p \n", S);
-    //printf("%zu \n", start_size);
-    int u = StackInit (&S, start_size);
-    //printf("%zu \n", start_size);
-    //int line = Dump(&S);
-    //printf ("S after %p \n", &S);
+
+    StackInit (&S, start_size);
+
     int a = 5;
     int b = 5;
-    int i = Push(&S, a);
-    printf("start_size: %zu \n", start_size);
-    i = Push(&S,b);
+    int c = 15;
+    Push(&S, a);
+    Push(&S,b);
+    Push(&S,c);
+    Push(&S,b);
     Dump(&S);
+
+    stack_element popped_element = 0;
+    Pop(&S, &popped_element);
+    printf( "\npopped el %d \n", popped_element);
+    Dump(&S);
+
+    Add(&S);
+    Dump(&S);
+    Multiply(&S);
+    Dump(&S);
+
+
 
 
 

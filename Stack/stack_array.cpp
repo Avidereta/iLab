@@ -156,19 +156,22 @@ bool IsEmpty (stack* S)
 int Pop(stack *S, stack_element* popped_element)
 {
     if(!IsOk(S))
-        return (Dump(S)), DUMP_CALLED;
+        return Dump(S), DUMP_CALLED;
 
     else {
 
         if (IsEmpty(S) == STACK_IS_EMPTY)
-            return ERR_STACK_EMPTY;
+            return printf("IsEmpty"),ERR_STACK_EMPTY;
             // What this function will return in other cases?
 
             // Why do you need else? You already have return.
         else {
-            *popped_element = S->data[S->top];
-            if (!IsPointerOk(popped_element)) return NULL_POINTER;
+
+            * popped_element = S->data[S->top];
+
+            if (!IsPointerOk(popped_element)) return  NULL_POINTER;
             else {
+
                 S->data[S->top] = 0;
                 S->top -= 1;
                 if (S->top < (int) S->current_size / 4) {
@@ -191,6 +194,7 @@ int Pop(stack *S, stack_element* popped_element)
 }
 
 int Push (stack *S, stack_element new_element) {
+    
     // Check pointers!
     if(!IsOk(S))
         return Dump(S), DUMP_CALLED;
@@ -199,7 +203,8 @@ int Push (stack *S, stack_element new_element) {
 
         if (S->top < (int)S->current_size)
         {
-            S->data[S->top++] = new_element;
+
+            S->data[++ S->top] = new_element;
             return 0;
 
         }
@@ -210,4 +215,73 @@ int Push (stack *S, stack_element new_element) {
             else return CALLOC_ERROR;
         }
     }
+}
+
+int Add(stack* S)
+{
+    if(!IsOk(S))
+        return Dump(S), DUMP_CALLED;
+
+    stack_element a = 0;
+    stack_element b = 0;
+    Pop(S, &a);
+    Pop(S, &b);
+
+    stack_element sum = a + b;
+
+    Push(S, sum);
+
+    return 0;
+}
+
+int Substaction(stack* S)
+{
+    if(!IsOk(S))
+        return Dump(S), DUMP_CALLED;
+
+    stack_element a = 0;
+    stack_element b = 0;
+    Pop(S, &a);
+    Pop(S, &b);
+
+    stack_element sub = a + b;
+
+    Push(S, sub);
+
+    return 0;
+}
+
+
+int Division(stack* S)
+{
+    if(!IsOk(S))
+        return Dump(S), DUMP_CALLED;
+
+    stack_element a = 0;
+    stack_element b = 0;
+    Pop(S, &a);
+    Pop(S, &b);
+
+    stack_element div = a + b;
+
+    Push(S, div);
+
+    return 0;
+}
+
+int Multiply(stack* S)
+{
+    if(!IsOk(S))
+        return Dump(S), DUMP_CALLED;
+
+    stack_element a = 0;
+    stack_element b = 0;
+    Pop(S, &a);
+    Pop(S, &b);
+
+    stack_element mult = a * b;
+
+    Push(S, mult);
+
+    return 0;
 }

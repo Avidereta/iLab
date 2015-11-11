@@ -16,3 +16,5 @@ void StackDestroy(stack* S);
 bool IsEmpty (stack* S);
 int Pop(stack *S, stack_element* popped_element);
 int Push (stack *S, stack_element new_element);
+int Multiply(stack* S);
+int Add(stack* S);
