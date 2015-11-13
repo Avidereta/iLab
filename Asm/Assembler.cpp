@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "Stack.h"
 #include "ErrorList.h
+#include "ErrorList.h"
 
 const int max_nmb_strings = 100;
 
@@ -82,18 +83,19 @@ char* Read(char* initial_text)
 
 
     buffer = (char*)calloc( 1, lSize + 1 );
-    if( !buffer )
+    if(!buffer)
     {
         fclose(infile);
-        fputs("memory alloc fails", stderr);
+        LOG_PRINT("NULL pointer in calloc");
     }
 
 
-    if( fread( buffer , lSize, 1 , infile) != 1)
+    if(fread( buffer , lSize, 1 , infile) != 1)
     {
-        fclose(infile), free(buffer), fputs("entire read fails", stderr), exit(1);
+        fclose(infile);
+        free(buffer);
+        LOG_PRINT("Entire read fails");
     }
-
 
     fclose(infile);
 

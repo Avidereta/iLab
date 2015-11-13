@@ -129,8 +129,6 @@ int Pop(stack *S, stack_element* popped_element)
 
     * popped_element = S->data[S->top];
 
-    if (!(*popped_element)) return NULL_POINTER;
-
     S->data[S->top] = 0;
     S->top -= 1;
 
@@ -175,7 +173,8 @@ int Remove(stack *S)
     return 0;
 }
 
-int Push (stack *S, stack_element new_element) {
+int Push (stack *S, stack_element new_element)
+{
 
     if(!IsOk(S))
         return Dump(S), DUMP_CALLED;
@@ -188,77 +187,12 @@ int Push (stack *S, stack_element new_element) {
 
     S->data = (stack_element *) realloc(S->data, S->current_size * 2);
 
-    if (S->data)
-        return S->current_size = S->current_size * 2, 0;
-    return CALLOC_ERROR;
-}
+    if (!S->data)
+        LOG_ERROR(CALLOC_ERROR, "Realloc");
 
-
-int Add(stack* S)
-{
-    if(!IsOk(S))
-        return Dump(S), DUMP_CALLED;
-
-    stack_element a = 0;
-    stack_element b = 0;
-    Pop(S, &a);
-    Pop(S, &b);
-
-    stack_element sum = a + b;
-
-    Push(S, sum);
-
+    S->current_size = S->current_size * 2;
     return 0;
-}
 
-int Subtraction(stack* S)
-{
-    if(!IsOk(S))
-        return Dump(S), DUMP_CALLED;
-
-    stack_element a = 0;
-    stack_element b = 0;
-    Pop(S, &a);
-    Pop(S, &b);
-
-    stack_element sub = a + b;
-
-    Push(S, sub);
-
-    return 0;
 }
 
 
-int Division(stack* S)
-{
-    if(!IsOk(S))
-        return Dump(S), DUMP_CALLED;
-
-    stack_element a = 0;
-    stack_element b = 0;
-    Pop(S, &a);
-    Pop(S, &b);
-
-    stack_element div = a/b;
-
-    Push(S, div);
-
-    return 0;
-}
-
-int Multiply(stack* S)
-{
-    if(!IsOk(S))
-        return Dump(S), DUMP_CALLED;
-
-    stack_element a = 0;
-    stack_element b = 0;
-    Pop(S, &a);
-    Pop(S, &b);
-
-    stack_element mult = a * b;
-
-    Push(S, mult);
-
-    return 0;
-}
