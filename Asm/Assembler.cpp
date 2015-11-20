@@ -3,137 +3,139 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "Stack.h"
-#include "ErrorList.h
 #include "ErrorList.h"
+
+
+#define $ ,
 
 const int max_nmb_strings = 100;
 
-char* Read(char* initial_text);
-int MakeBinary(char* input_file);
-int Write_to_file(char* name_file, char* str_pointers[], const int nmb_pointers);
+int Read(char* initial_text, char** text);
+int Preprocess(char *input_name, int *codeflow, size_t max_size);
 
 enum Commands
 {
-    PUSH = 1,
-    POP = 2,
-    ADD = 3,
-    SUB = 4,
-    END = 5,
+    PUSH,
+    POP,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    REM,
+    END,
+    COMMANDS_NUMBER
 
 };
 
 
 int main()
 {
-    char input_name[] = "/home/anastasia/iLab/Asm/Comm.txt";
-    assert(input_name);
 
-    char* text = Read(input_name);
-    assert(text);
-    int i = 0;
 
-    printf("\n%s", text);
+    char input_name[] = "/home/anastasia/git/iLab/Asm/Comm.txt";
+    printf("Here");
+    fflush(stdout);
+
+
+    size_t const max_size = 30;
+    int codeflow[max_size] = {0};
+    int res = Preprocess(input_name, codeflow, max_size);
+    printf("Here");
+    fflush(stdout);
+    for (int i = 0; i <= max_size; i++)
+    {
+        printf("%d\n", codeflow[i]);
+    }
+
+    return 0;
+
+}
+
+
+int Preprocess(char *input_name, int *codeflow, size_t max_size)
+{
+
+
+    char* text = 0;
+    Read(input_name, &text);
+
+    //printf("\n%s", text);
+
+
+    char* command[] = {"push", "pop", "add", "sub", "mul", "div", "rem", "end"};
+
+    size_t cur_size = 0;
 
     for (char* line = strtok(text,"\n"); line!= NULL ; line = strtok(NULL, "\n"))
     {
-        char* comm = strtok(line," " );
+        printf("\n%zu %s\n", cur_size, line);
+        for (int i = 0; i < COMMANDS_NUMBER; i++)
+        {
+            if(strstr(line, command[i]))
+            {
+                printf("%d\n", codeflow);
+                fflush(stdout);
+                if (cur_size > max_size)
+                    LOG_ERROR(ARRAY_IS_FULL, "Array of commands is full");
+                codeflow[cur_size] = i;
+                cur_size++;
 
-        printf("\n %d %s", i,line);
-        i++;
+                if (i == 0)
+                    if (cur_size > max_size)
+                    LOG_ERROR(ARRAY_IS_FULL, "Array of commands is full");
+                    codeflow[cur_size] = atoi(line + 5);
+                    cur_size++;
+            }
+        }
     }
 
-
-    //printf("Hello");
     return 0;
-
 }
 
 
-int MakeBinary(char* input_file)
-{
-    char* text = Read(input_file);
+int Read(char*initial_file, char** text) {
+
+    assert(initial_file);
     assert(text);
 
-
-
-    char* lines[max_nmb_strings] = {0};
-
-    for (char* line = strtok(text,"\n"); line != NULL; line = strtok(NULL, "\n"))
-    {
-        char* comm = strtok(line," " );
-    }
-
-    return 0;
-}
-
-// Obligatory free buffer!!!
-char* Read(char* initial_text)
-{
-    assert(initial_text);
-
-    FILE *infile = fopen(initial_text, "r");
-    assert(infile);
+    FILE *infile = fopen(initial_file, "r");
+    if (!infile)
+        LOG_ERROR(NULL_POINTER, "NULL opened file pointer");
 
     long lSize = 0;
-    char *buffer = 0;
 
-    fseek( infile , 0L , SEEK_END);
-    lSize = ftell( infile ); //значение указателя текущего положения потока
-    rewind( infile ); //  внутренний указатель положения файла в начальное положение
+    int res = fseek(infile , 0L , SEEK_END);
+    if (res)
+        LOG_ERROR(res, "Fseek failed\n");
+
+    lSize = ftell(infile); //значение указателя текущего положения потока
+
+    res = fseek(infile , 0L , SEEK_SET); //  внутренний указатель положения файла в начальное положение
+    if (res)
+        LOG_ERROR(res, "Fseek failed\n" );
 
 
-    buffer = (char*)calloc( 1, lSize + 1 );
-    if(!buffer)
+    *text = (char*)calloc( 1, lSize + 1 ); // EOL end of line
+    if(!(*text))
     {
         fclose(infile);
-        LOG_PRINT("NULL pointer in calloc");
+        LOG_ERROR(CALLOC_ERROR, "NULL pointer in calloc");
     }
 
-
-    if(fread( buffer , lSize, 1 , infile) != 1)
+    if(fread( *text , lSize, 1 , infile) != 1)
     {
         fclose(infile);
-        free(buffer);
-        LOG_PRINT("Entire read fails");
+        free(*text);
+        LOG_ERROR(READ_ERROR, "Entire read fails");
     }
 
     fclose(infile);
 
-    return buffer;
+    return 0;
 }
 
 
 
-
-
-int Write_to_file(char* name_file, char* str_pointers[], const int nmb_pointers)
-{
-    assert(name_file);
-    assert(str_pointers);
-
-    FILE *outfile = fopen(name_file, "w");
-
-    if (outfile == NULL)
-    {
-        printf("Error opening file!\n");
-        exit(1);
-    }
-
-    int printed_strings = 0;
-
-
-    for (int i = 0; i < nmb_pointers; i++)
-    {
-        assert(i < nmb_pointers);
-        fprintf(outfile, "%s\n", str_pointers[i]);
-        printed_strings++;
-    }
-
-    fclose(outfile);
-
-    return printed_strings;
-
-}
 
 
 

@@ -1,9 +1,12 @@
 push 10
 push 5
 push 5
+push 100
+push 10
 add
 push 2
-mult
+mul
 pop
+div
 end
 
